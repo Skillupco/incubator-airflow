@@ -38,7 +38,7 @@ def download_execution_outputs(task_id, output_path, **context):
     Downloads and replaces execution outputs locally using the S3 url
     with authentication details from the Valohai execution details API.
 
-    Execution details are pulled from the XCOM variable of the last sucessful model task.
+    Execution details are pulled from the XCOM variable of the last successful model task.
     """
     execution_details = context['ti'].xcom_pull(task_ids=task_id)
     for output in execution_details['outputs']:
@@ -54,12 +54,12 @@ class ValohaiHook(BaseHook):
         self.valohai_conn = self.get_connection(valohai_conn_id)
         self.host = self.valohai_conn.host
         if 'token' in self.valohai_conn.extra_dejson:
-            logging.info('Using token autorization.')
+            logging.info('Using token authorization.')
             self.headers = {
                 'Authorization': 'Token {}'.format(self.valohai_conn.extra_dejson['token'])
             }
 
-    def get_respository_id(self, project_id):
+    def get_repository_id(self, project_id):
         url = 'https://{host}/{endpoint}'.format(
             host=self.host,
             endpoint=LIST_REPOSITORIES_ENDPOINT,
@@ -92,7 +92,7 @@ class ValohaiHook(BaseHook):
         return response.json()
 
     def get_latest_commit(self, project_id, branch):
-        repository_id = self.get_respository_id(project_id)
+        repository_id = self.get_repository_id(project_id)
 
         url = 'https://{host}/{endpoint}'.format(
             host=self.host,

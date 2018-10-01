@@ -22,7 +22,7 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         valohai_conn_id='valohai_default',
         **kwargs
     ):
-        '''
+        """
         Args:
             previous_outputs (list):
                 [{
@@ -30,7 +30,7 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
                     'output_name': 'REPLACE WITH PREVIOUS TASK OUTPUT NAME',
                     'input_name': 'REPLACE WITH CURRENT TASK INPUT NAME'
                 }]
-        '''
+        """
         super(ValohaiSubmitExecutionOperator, self).__init__(**kwargs)
         self.project_id = project_id
         self.step = step
@@ -49,7 +49,9 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         )
 
     def add_task_outputs_to_input(self, task_outputs, context):
-        '''Allows to pass the outputs from a previous task as the inputs of the current one'''
+        """
+        Allows to pass the outputs from a previous task as the inputs of the current one
+        """
         extra_inputs = {}
 
         for output in task_outputs:

@@ -34,12 +34,12 @@ success_execution_statuses = {
 
 
 def download_execution_outputs(task_id, output_path, **context):
-    '''
+    """
     Downloads and replaces execution outputs locally using the S3 url
     with authentication details from the Valohai execution details API.
 
     Execution details are pulled from the XCOM variable of the last sucessful model task.
-    '''
+    """
     execution_details = context['ti'].xcom_pull(task_ids=task_id)
     for output in execution_details['outputs']:
         logging.info('Downloading output: {}'.format(output['name']))
@@ -74,10 +74,10 @@ class ValohaiHook(BaseHook):
                 return repository['id']
 
     def fetch_repository(self, project_id):
-        '''
+        """
         Make Valohai fetch the latest commit for the fetch reference
         in the Valohai UI repository settings.
-        '''
+        """
         url = 'https://{host}/{endpoint}'.format(
             host=self.host,
             endpoint=FETCH_REPOSITORY_ENDPOINT.format(project_id=project_id)
@@ -145,11 +145,11 @@ class ValohaiHook(BaseHook):
         previous_outputs,
         polling_period_seconds=30,
     ):
-        '''
+        """
         Submits an execution to valohai and checks the status until the execution succeeds or fails.
 
         Returns the execution details if the execution completed successfully.
-        '''
+        """
         self.polling_period_seconds = polling_period_seconds
         if branch:
             response = self.fetch_repository(project_id)

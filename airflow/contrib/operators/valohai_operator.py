@@ -20,6 +20,7 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         tags=None,
         previous_outputs=[],
         valohai_conn_id='valohai_default',
+        *args,
         **kwargs
     ):
         """
@@ -31,7 +32,7 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
                     'input_name': 'REPLACE WITH CURRENT TASK INPUT NAME'
                 }]
         """
-        super(ValohaiSubmitExecutionOperator, self).__init__(**kwargs)
+        super(ValohaiSubmitExecutionOperator, self).__init__(*args, **kwargs)
         self.project_id = project_id
         self.step = step
         self.inputs = inputs

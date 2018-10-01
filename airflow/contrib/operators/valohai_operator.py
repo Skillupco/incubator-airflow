@@ -58,7 +58,11 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         extra_inputs = {}
 
         for output in task_outputs:
-            execution_details = context['ti'].xcom_pull(task_ids=output['task_id'], dag_id=output['dag_id'], include_prior_dates=True)
+            execution_details = context['ti'].xcom_pull(
+                task_ids=output['task_id'],
+                dag_id=output['dag_id'],
+                include_prior_dates=True
+            )
             # TODO: check that execution details is not None
             for previous_output in execution_details['outputs']:
                 if previous_output['name'] == output['output_name']:

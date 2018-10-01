@@ -18,7 +18,7 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         commit=None,
         branch=None,
         tags=None,
-        previous_outputs=[],
+        previous_outputs=None,
         valohai_conn_id='valohai_default',
         *args,
         **kwargs
@@ -32,6 +32,8 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
                     'input_name': 'REPLACE WITH CURRENT TASK INPUT NAME'
                 }]
         """
+        if previous_outputs is None:
+            previous_outputs = []
         super(ValohaiSubmitExecutionOperator, self).__init__(*args, **kwargs)
         self.project_id = project_id
         self.step = step

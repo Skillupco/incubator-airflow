@@ -91,7 +91,6 @@ class ValohaiHook(BaseHook):
         # TODO: handle project not found error
         return response.json()
 
-
     def get_latest_commit(self, project_id, branch):
         repository_id = self.get_respository_id(project_id)
 

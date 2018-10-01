@@ -149,7 +149,6 @@ class ValohaiHook(BaseHook):
 
         Returns the execution details if the execution completed successfully.
         """
-        self.polling_period_seconds = polling_period_seconds
         if branch:
             response = self.fetch_repository(project_id)
             logging.info('Fetched latest commits with response: {}'.format(response))
@@ -184,7 +183,7 @@ class ValohaiHook(BaseHook):
             self.add_execution_tags(tags, execution_id)
             logging.info('Added execution tags: {}'.format(tags))
         while True:
-            time.sleep(self.polling_period_seconds)
+            time.sleep(polling_period_seconds)
             execution_details = self.get_execution_details(execution_id)
             status = execution_details['status']
             if status in incomplete_execution_statuses:

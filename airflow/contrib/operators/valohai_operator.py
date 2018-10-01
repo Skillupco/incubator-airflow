@@ -70,7 +70,9 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
 
         logging.info('Adding extra inputs: {}'.format(extra_inputs))
 
-        return {**self.inputs, **extra_inputs}
+        new_inputs = self.inputs.copy()
+        new_inputs.update(extra_inputs)
+        return new_inputs
 
     def execute(self, context):
         hook = self.get_hook()

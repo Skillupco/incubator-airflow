@@ -69,7 +69,7 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         hook = self.get_hook()
 
         # Add previous task outputs to inputs
-        if self.previous_outputs[0]: # TODO fix this: ([],), why airflow wraps this list around a tuple ?
+        if self.previous_outputs[0]:  # TODO fix this: ([],), why airflow wraps this list around a tuple ?
             self.inputs = self.add_task_outputs_to_input(self.previous_outputs[0], context)
 
         # Pushes execution status to XCOM

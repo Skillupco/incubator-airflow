@@ -40,7 +40,7 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         self.commit = commit
         self.branch = branch
         self.tags = tags
-        self.previous_outputs = previous_outputs,
+        self.previous_outputs = previous_outputs
         self.valohai_conn_id = valohai_conn_id
 
     def get_hook(self):

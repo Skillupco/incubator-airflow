@@ -18,11 +18,12 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         commit=None,
         branch=None,
         tags=None,
-        previous_outputs=[],
+        previous_outputs=None,
         valohai_conn_id='valohai_default',
+        *args,
         **kwargs
     ):
-        '''
+        """
         Args:
             previous_outputs (list):
                 [{
@@ -30,8 +31,10 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
                     'output_name': 'REPLACE WITH PREVIOUS TASK OUTPUT NAME',
                     'input_name': 'REPLACE WITH CURRENT TASK INPUT NAME'
                 }]
-        '''
-        super(ValohaiSubmitExecutionOperator, self).__init__(**kwargs)
+        """
+        if previous_outputs is None:
+            previous_outputs = []
+        super(ValohaiSubmitExecutionOperator, self).__init__(*args, **kwargs)
         self.project_id = project_id
         self.step = step
         self.inputs = inputs
@@ -49,11 +52,17 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
         )
 
     def add_task_outputs_to_input(self, task_outputs, context):
-        '''Allows to pass the outputs from a previous task as the inputs of the current one'''
+        """
+        Allows to pass the outputs from a previous task as the inputs of the current one
+        """
         extra_inputs = {}
 
         for output in task_outputs:
-            execution_details = context['ti'].xcom_pull(task_ids=output['task_id'], dag_id=output['dag_id'], include_prior_dates=True)
+            execution_details = context['ti'].xcom_pull(
+                task_ids=output['task_id'],
+                dag_id=output['dag_id'],
+                include_prior_dates=True
+            )
             # TODO: check that execution details is not None
             for previous_output in execution_details['outputs']:
                 if previous_output['name'] == output['output_name']:
@@ -61,13 +70,15 @@ class ValohaiSubmitExecutionOperator(BaseOperator):
 
         logging.info('Adding extra inputs: {}'.format(extra_inputs))
 
-        return {**self.inputs, **extra_inputs}
+        new_inputs = self.inputs.copy()
+        new_inputs.update(extra_inputs)
+        return new_inputs
 
     def execute(self, context):
         hook = self.get_hook()
 
         # Add previous task outputs to inputs
-        if self.previous_outputs[0]: # TODO fix this: ([],), why airflow wraps this list around a tuple ?
+        if self.previous_outputs[0]:  # TODO fix this: ([],), why airflow wraps this list around a tuple ?
             self.inputs = self.add_task_outputs_to_input(self.previous_outputs[0], context)
 
         # Pushes execution status to XCOM

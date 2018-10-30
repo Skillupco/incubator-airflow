@@ -35,12 +35,12 @@ success_execution_statuses = {
 
 
 def download_execution_outputs(task_id, output_path, **context):
-    '''
+    """
     Downloads and replaces execution outputs locally using the S3 url
     with authentication details from the Valohai execution details API.
 
-    Execution details are pulled from the XCOM variable of the last sucessful model task.
-    '''
+    Execution details are pulled from the XCOM variable of the last successful model task.
+    """
     execution_details = context['ti'].xcom_pull(task_ids=task_id)
     for output in execution_details['outputs']:
         logging.info('Downloading output: {}'.format(output['name']))
@@ -55,12 +55,12 @@ class ValohaiHook(BaseHook):
         self.valohai_conn = self.get_connection(valohai_conn_id)
         self.host = self.valohai_conn.host
         if 'token' in self.valohai_conn.extra_dejson:
-            logging.info('Using token autorization.')
+            logging.info('Using token authorization.')
             self.headers = {
                 'Authorization': 'Token {}'.format(self.valohai_conn.extra_dejson['token'])
             }
 
-    def get_respository_id(self, project_id):
+    def get_repository_id(self, project_id):
         url = 'https://{host}/{endpoint}'.format(
             host=self.host,
             endpoint=LIST_REPOSITORIES_ENDPOINT,
@@ -75,10 +75,10 @@ class ValohaiHook(BaseHook):
                 return repository['id']
 
     def fetch_repository(self, project_id):
-        '''
+        """
         Make Valohai fetch the latest commit for the fetch reference
         in the Valohai UI repository settings.
-        '''
+        """
         url = 'https://{host}/{endpoint}'.format(
             host=self.host,
             endpoint=FETCH_REPOSITORY_ENDPOINT.format(project_id=project_id)
@@ -92,9 +92,8 @@ class ValohaiHook(BaseHook):
         # TODO: handle project not found error
         return response.json()
 
-
     def get_latest_commit(self, project_id, branch):
-        repository_id = self.get_respository_id(project_id)
+        repository_id = self.get_repository_id(project_id)
 
         url = 'https://{host}/{endpoint}'.format(
             host=self.host,
@@ -146,12 +145,11 @@ class ValohaiHook(BaseHook):
         previous_outputs,
         polling_period_seconds=30,
     ):
-        '''
+        """
         Submits an execution to valohai and checks the status until the execution succeeds or fails.
 
         Returns the execution details if the execution completed successfully.
-        '''
-        self.polling_period_seconds = polling_period_seconds
+        """
         if branch:
             response = self.fetch_repository(project_id)
             logging.info('Fetched latest commits with response: {}'.format(response))
@@ -186,7 +184,7 @@ class ValohaiHook(BaseHook):
             self.add_execution_tags(tags, execution_id)
             logging.info('Added execution tags: {}'.format(tags))
         while True:
-            time.sleep(self.polling_period_seconds)
+            time.sleep(polling_period_seconds)
             execution_details = self.get_execution_details(execution_id)
             status = execution_details['status']
             if status in incomplete_execution_statuses:
